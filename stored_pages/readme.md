@@ -1,0 +1,1 @@
+Here the plugin will store all confluence pages as html file

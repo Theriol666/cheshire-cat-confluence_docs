@@ -1,0 +1,7 @@
+{
+    "name": "Atlassian Confluence Docs",
+    "description": "Send your Confluence documentation to Cheshire and create a PM bot.\nConfigure the plugin and start sending this command to Cheshire: /confluence_docs",
+    "author_name": "Raffaele Bortolotto",
+    "version": "0.1.0",
+    "tags": "confluence, documentation, wiki, atlassian"
+}
