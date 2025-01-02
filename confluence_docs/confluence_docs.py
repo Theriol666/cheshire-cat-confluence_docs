@@ -222,29 +222,16 @@ def get_page_data(page_id: str | int, page: dict = {}) -> dict:
             "parent_id": parent_id,
             "title": page["title"],
             "content": page["body"]["view"]["value"],
-            "base_url": f"{confluence_settings.CONFLUENCE_URL}/pages/viewpage.action?pageId={page['id']}",
-            "url": f"{confluence_settings.CONFLUENCE_URL}/{page['_links']['webui']}",
+            "page_detail": f"{page['_links']['base']}/pages/viewinfo.action?pageId={page['id']}",
+            "url": f"{page['_links']['base']}{page['_links']['webui']}",
         }
 
     return store_data
 
 
 def storage_page(page_data: dict) -> str | None:
-    """Stora page information in a file. Page data expected should be a dict with title, content, base_url and url"""
-    page = f"""
-    <html>
-        <head>
-            <title>{page_data['title']}</title>
-        </head>
-        <body>
-            <h1>{page_data['title']}</h1>
-            <p>Page URL: <a href="{page_data['url']}">{page_data['url']}</a></p>
-            <p>Base URL: <a href="{page_data['base_url']}">{page_data['base_url']}</a></p>
-            <p>Parent Page(s): {(", ".join(page_data['parent_id']) if page_data['parent_id'] else "")}</p>
-            {page_data['content']}
-        </body>
-    </html>
-    """
+    """Storage page information in a file. Page data expected should be a dict with title, content, base_url and url"""
+
     file_name = f"{page_data['id']}--{page_data['title']}.html"
     file_dir = stored_pages_path
     if page_data["parent_id"]:
@@ -253,6 +240,22 @@ def storage_page(page_data: dict) -> str | None:
             os.makedirs(file_dir, exist_ok=True)
 
     file_path = os.path.join(file_dir, file_name)
+
+    page = f"""
+    <html>
+        <head>
+            <title>{page_data['title']}</title>
+        </head>
+        <body>
+            <h1>{page_data['title']}</h1>
+            <p>Page URL: <a href="{page_data['url']}">{page_data['url']}</a></p>
+            <p>Detail URL: <a href="{page_data['page_detail']}">{page_data['page_detail']}</a></p>
+            <p>Parent Page(s): {(" > ".join(page_data['parent_id']) if page_data['parent_id'] else "")}</p>
+            <p>Page Internal Path: {file_path}</p>
+            {page_data['content']}
+        </body>
+    </html>
+    """
 
     with open(file_path, "w") as file:
         log.info(f"Storing page: {page_data['title']} in {file_path}")
