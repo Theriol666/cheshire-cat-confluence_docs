@@ -29,18 +29,17 @@ stored_pages_path = os.path.join(
 
 
 # Change prompt prefix if needed
-@hook(priority=10)
+@hook
 def agent_prompt_prefix(prefix, cat):
     settings = cat.mad_hatter.get_plugin().load_settings()
-    return (
-        settings["PROMPT_CONTEXT"]
-        if hasattr(settings, "PROMPT_CONTEXT")
-        else MAIN_PROMPT_PREFIX
-    )
+    if settings.get("PROMPT_CONTEXT"):
+        prefix = settings.get("PROMPT_CONTEXT")
+
+    return prefix
 
 
 # Use Fast Reply hook to manage user commands
-@hook(priority=10)
+@hook
 def agent_fast_reply(fast_reply, cat) -> dict:
     # Get user message
     settings = cat.mad_hatter.get_plugin().load_settings()
